@@ -29,6 +29,11 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
 
+// serve routes
+fs.readdirSync("./routes").forEach(file => {
+  app.use(`/api/v1/${file.replace('.js', '')}`, require(`./routes/${file}`).router);
+});
+
 // start server
 app.listen(3000, () => {
   console.log('API started!');
