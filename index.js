@@ -1,42 +1,59 @@
+require('dotenv').config();
 const express = require("express");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const app = express();
+var MongoClient = require('mongodb').MongoClient;
+var url = process.env.DB;
 
-app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(bodyParser.json({limit: "50mb"}));
-app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+MongoClient.connect(url, function (err, db) {
+   var bedrockDB = db.db('bedrocklol');
+   var bedrockUsers = bedrockDB.collection('users');
+   if (err) throw err;
+   console.log("Database connected!");
 
-// serve redirects
-const redirects = {
-  "/discord": "https://discord.gg/XwnAwF6jya"
-};
+   app.use(express.static(__dirname + "/public"));
+   app.use(bodyParser.urlencoded({
+      extended: false
+   }));
+   app.use(bodyParser.json());
 
-Object.entries(redirects).forEach(obj => {
-  app.get(obj[0], (req, res) => {
-    res.redirect(obj[1]);
-  });
-});
+   // serve redirects
+   const redirects = {
+      "/discord": "https://discord.gg/XwnAwF6jya"
+   };
 
-// serve webpages
-fs.readdirSync("./public").filter(file => file.endsWith(".html") && file != "index.html").forEach(file => {
-  app.get(`/${file.replace(".html", "")}`, (req, res) => {
-    res.sendFile(__dirname + `/public/${file}`);
-  });
-});
+   Object.entries(redirects).forEach(obj => {
+      app.get(obj[0], (req, res) => {
+         res.redirect(obj[1]);
+      });
+   });
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
-});
+   // serve webpages
+   fs.readdirSync("./public").filter(file => file.endsWith(".html") && file != "index.html").forEach(file => {
+      app.get(`/${file.replace(".html", "")}`, (req, res) => {
+         res.sendFile(__dirname + `/public/${file}`);
+      });
+   });
 
-// serve routes
-fs.readdirSync("./routes").forEach(file => {
-  app.use(`/api/v1/${file.replace('.js', '')}`, require(`./routes/${file}`).router);
-});
+   app.get("/", (req, res) => {
+      res.sendFile(__dirname + "/public/index.html");
+   });
 
-// start server
-app.listen(3000, () => {
-  console.log('API started!');
+   app.get("/users", (req, res) => {
+      bedrockUsers.find({}).toArray(function (err, result) {
+         if (err) throw err;
+         res.send(JSON.stringify(result));
+      });
+   })
+
+   // serve routes
+   fs.readdirSync("./routes").forEach(file => {
+      app.use(`/api/v1/${file.replace('.js', '')}`, require(`./routes/${file}`).router);
+   });
+
+   // start server
+   app.listen(3000, () => {
+      console.log('API started!');
+   });
 });
