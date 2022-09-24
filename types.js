@@ -16,4 +16,12 @@ const PLATFORM_TYPE = {
   LINUX: 15
 };
 
-module.exports = { PLATFORM_TYPE };
+const RARITY = {
+  COMMON: 0,
+  UNCOMMON: 1,
+  RARE: 2,
+  EPIC: 3,
+  LEGENDARY: 4
+};
+
+module.exports = { PLATFORM_TYPE, RARITY };
