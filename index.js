@@ -1,5 +1,4 @@
 require('dotenv').config();
-const bedrockDB = require("./db");
 const express = require("express");
 const fs = require("fs");
 const bodyParser = require("body-parser");
@@ -33,19 +32,9 @@ app.get("/", (req, res) => {
    res.sendFile(__dirname + "/public/index.html");
 });
 
-app.get("/users", (req, res) => {
-   bedrockDB(function (err, bedrockDB) {
-      var bedrockUsers = bedrockDB.collection('users');
-      bedrockUsers.find({}).toArray(function (err, result) {
-         if (err) throw err;
-         res.send(JSON.stringify(result));
-      });
-   });
-})
-
 // serve routes
 fs.readdirSync("./routes").forEach(file => {
-   app.use(`/api/v1/${file.replace('.js', '')}`, require(`./routes/${file}`).router);
+   app.use(`/api/${file.replace('.js', '')}`, require(`./routes/${file}`).router);
 });
 
 // start server
