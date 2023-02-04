@@ -2,7 +2,7 @@ const db = require("../db");
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
-  const capes = db.GetBedrockCapes({ verified: true });
+  const capes = db.GetBedrockCapes();
   res.send(JSON.stringify(capes));
 });
 
