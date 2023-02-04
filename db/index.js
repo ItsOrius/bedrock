@@ -54,23 +54,21 @@ const BedrockCapes = db.define('bedrock_capes', {
 });
 
 function GetBedrockCape(query) {
-  BedrockCapes.sync();
   return BedrockCapes.findOne({ where: query });
 }
 
 function GetBedrockCapes(query) {
-  BedrockCapes.sync();
   return BedrockCapes.findAll({ where: query });
 }
 
 function GetBedrockPlayer(query) {
-  BedrockPlayers.sync();
   return BedrockPlayers.findOne({ where: query });
 }
 
 function GetBedrockPlayers(query) {
-  BedrockPlayers.sync();
   return BedrockPlayers.findAll({ where: query });
 }
+
+db.sync();
 
 module.exports = { GetBedrockCape, GetBedrockCapes, GetBedrockPlayer, GetBedrockPlayers };
