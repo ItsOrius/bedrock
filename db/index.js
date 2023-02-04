@@ -1,11 +1,76 @@
-var MongoClient = require('mongodb').MongoClient;
-var url = process.env.DB;
+// setup database
+const Sequelize = require('sequelize');
+const db = new Sequelize.Sequelize('database', 'username', 'password', {
+  host: 'localhost',
+  dialect: 'sqlite',
+  storage: '../db.sqlite'
+});
 
-function bedrockDB(func) {
-    MongoClient.connect(url, (err, db) =>{
-        var realDb = db.db('bedrocklol');
-        func(err, realDb)
-    });
+// setup models
+const BedrockPlayers = db.define('bedrock_players', {
+  xuid: {
+    type: Sequelize.TEXT,
+    primaryKey: true,
+    allowNull: false,
+    unique: true
+  },
+  displayName: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  skinHash: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  capes: Sequelize.TEXT
+});
+const BedrockCapes = db.define('bedrock_capes', {
+  id: {
+    type: Sequelize.TEXT,
+    primaryKey: true,
+    allowNull: false,
+    unique: true
+  },
+  name: Sequelize.TEXT,
+  description: Sequelize.TEXT,
+  rarity: Sequelize.INTEGER,
+  texture: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  imageWidth: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  imageHeight: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  verified: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
+});
+
+function GetBedrockCape(query) {
+  BedrockCapes.sync();
+  return BedrockCapes.findOne({ where: query });
 }
 
-module.exports = bedrockDB;
+function GetBedrockCapes(query) {
+  BedrockCapes.sync();
+  return BedrockCapes.findAll({ where: query });
+}
+
+function GetBedrockPlayer(query) {
+  BedrockPlayers.sync();
+  return BedrockPlayers.findOne({ where: query });
+}
+
+function GetBedrockPlayers(query) {
+  BedrockPlayers.sync();
+  return BedrockPlayers.findAll({ where: query });
+}
+
+module.exports = { GetBedrockCape, GetBedrockCapes, GetBedrockPlayer, GetBedrockPlayers };
