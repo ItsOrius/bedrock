@@ -26,6 +26,9 @@ fs.readdirSync("./public").filter(file => file.endsWith(".html") && file != "ind
    app.get(`/${file.replace(".html", "")}`, (req, res) => {
       res.sendFile(__dirname + `/public/${file}`);
    });
+   app.get(`/${file.replace(".html", "")}/:1`, (req, res) => {
+      res.sendFile(__dirname + `/public/${file}`);
+   });
 });
 
 app.get("/", (req, res) => {

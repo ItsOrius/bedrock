@@ -53,20 +53,44 @@ const BedrockCapes = db.define('bedrock_capes', {
   }
 });
 
-function GetBedrockCape(query) {
-  return BedrockCapes.findOne({ where: query });
+/**
+ * Returns information about a cape from Minecraft: Bedrock Edition
+ * @param {object} query 
+ * @returns {object}
+ */
+async function GetBedrockCape(query) {
+  const cape = await BedrockCapes.findOne({ where: query });
+  if (!cape) return null;
+  const players = await BedrockPlayers.findAll({ where: { capes: { [Sequelize.Op.contains]: [cape.id] } } });
+  cape.dataValues.players = players;
+  return cape;
 }
 
-function GetBedrockCapes(query) {
-  return BedrockCapes.findAll({ where: query });
+/**
+ * Returns information about all applicable capes from Minecraft: Bedrock Edition
+ * @param {object} query
+ * @returns {object[]}
+ */
+async function GetBedrockCapes(query) {
+  return await BedrockCapes.findAll({ where: query });
 }
 
-function GetBedrockPlayer(query) {
-  return BedrockPlayers.findOne({ where: query });
+/**
+ * Returns information about a player from Minecraft: Bedrock Edition
+ * @param {object} query 
+ * @returns {object}
+ */
+async function GetBedrockPlayer(query) {
+  return await BedrockPlayers.findOne({ where: query });
 }
 
-function GetBedrockPlayers(query) {
-  return BedrockPlayers.findAll({ where: query });
+/**
+ * Returns information about all applicable players from Minecraft: Bedrock Edition
+ * @param {object} query
+ * @returns {object[]}
+ */
+async function GetBedrockPlayers(query) {
+  return await BedrockPlayers.findAll({ where: query });
 }
 
 db.sync();
