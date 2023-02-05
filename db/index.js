@@ -1,9 +1,10 @@
 // setup database
+const path = require("path");
 const Sequelize = require('sequelize');
 const db = new Sequelize.Sequelize('database', 'username', 'password', {
   host: 'localhost',
   dialect: 'sqlite',
-  storage: '../db.sqlite'
+  storage: path.join(__dirname, "../sqlite.db")
 });
 
 // setup models
