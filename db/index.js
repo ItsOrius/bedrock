@@ -36,7 +36,7 @@ const BedrockCapes = db.define('bedrock_capes', {
     allowNull: false
   },
   imageWidth: {
-    type: Sequelize.TEXT,
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   imageHeight: {
